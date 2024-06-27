@@ -2045,6 +2045,7 @@ class DataDocumenter(GenericAliasMixin,
     option_spec: ClassVar[OptionSpec] = dict(ModuleLevelDocumenter.option_spec)
     option_spec["annotation"] = annotation_option
     option_spec["no-value"] = bool_option
+    option_spec["no-alias"] = bool_option
 
     @classmethod
     def can_document_member(
@@ -2152,7 +2153,8 @@ class DataDocumenter(GenericAliasMixin,
         if not more_content:
             more_content = StringList()
 
-        self.update_content(more_content)
+        if not self.options.no_alias and inspect.isgenericalias(self.object):
+            self.update_content(more_content)
         super().add_content(more_content)
 
 
@@ -2592,6 +2594,7 @@ class AttributeDocumenter(GenericAliasMixin, SlotsMixin,  # type: ignore[misc]
     option_spec: ClassVar[OptionSpec] = dict(ModuleLevelDocumenter.option_spec)
     option_spec["annotation"] = annotation_option
     option_spec["no-value"] = bool_option
+    option_spec["no-alias"] = bool_option
 
     # must be higher than the MethodDocumenter, else it will recognize
     # some non-data descriptors as methods
@@ -2733,7 +2736,8 @@ class AttributeDocumenter(GenericAliasMixin, SlotsMixin,  # type: ignore[misc]
 
         if more_content is None:
             more_content = StringList()
-        self.update_content(more_content)
+        if not self.options.no_alias and inspect.isgenericalias(self.object):
+            self.update_content(more_content)
         super().add_content(more_content)
 
 
